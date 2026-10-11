@@ -1,0 +1,24 @@
+---
+// Not-found page, built as 404.html, which the server sends with status 404 in place of a missing page: the page title and description; the layout's noindex mode (a robots rule against indexing in place of the canonical URL, and no Open Graph metadata); and an introduction with the main heading and a lead paragraph that links to the home, Services, and About pages and starts with the description text. The introduction uses the shared styles in global.css.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { aboutPage, servicesPage, siteName } from "../lib/site";
+
+const pageName = "Page not found";
+const description = "There is no page at this address.";
+---
+
+<BaseLayout
+	title={`${pageName} - ${siteName}`}
+	description={description}
+	noindex={true}
+>
+	<div class="page-width page-intro">
+		<h1>{pageName}</h1>
+		<p class="lead">
+			{description} Check that the address is correct, or go to the
+			<a href="/">home page</a>, the
+			<a href={servicesPage.path}>{servicesPage.name} page</a> or the
+			<a href={aboutPage.path}>{aboutPage.name} page</a>.
+		</p>
+	</div>
+</BaseLayout>
