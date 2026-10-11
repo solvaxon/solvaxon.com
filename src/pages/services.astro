@@ -1,0 +1,193 @@
+---
+// Services page: the page title and description; an introduction with the main heading and a lead paragraph; and one section for each of the four services (websites, web applications, custom online tools, and other web projects), each below a hairline rule, with an anchor for direct links, its number and name, what the service is, and the typical problems it solves, the number and name placed beside the rest when the viewport is at least 48rem wide.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { servicesPage, siteName } from "../lib/site";
+
+const description =
+	"Solvaxon's services: websites, web applications, custom online tools and other web-based projects, each with what it is and the typical problems it solves.";
+---
+
+<BaseLayout
+	title={`${servicesPage.name} - ${siteName}`}
+	description={description}
+>
+	<div class="page-width intro">
+		<h1>{servicesPage.name}</h1>
+		<p class="lead">
+			Solvaxon builds websites, web applications, custom online tools and other
+			web-based projects for individuals and businesses. Each service below
+			explains what the work is and the typical problems it solves.
+		</p>
+	</div>
+	<section class="page-width service" id="websites">
+		<header>
+			<p class="number">01</p>
+			<h2>Websites</h2>
+		</header>
+		<div class="details">
+			<p>
+				A website gives a person, a business or an idea a home on the web. It is
+				where people find out what you do and what you offer, and how to get in
+				touch.
+			</p>
+			<h3>Typical problems</h3>
+			<ul>
+				<li>
+					There is no website yet, so people who look you up find nothing.
+				</li>
+				<li>
+					The current website is out of date and no longer reflects what you do.
+				</li>
+				<li>
+					Visitors cannot quickly find what they came for, such as what you
+					offer or how to contact you.
+				</li>
+			</ul>
+		</div>
+	</section>
+	<section class="page-width service" id="web-applications">
+		<header>
+			<p class="number">02</p>
+			<h2>Web applications</h2>
+		</header>
+		<div class="details">
+			<p>
+				A web application is software that people use in a web browser to get
+				work done, such as handling bookings, orders or records, without
+				installing anything.
+			</p>
+			<h3>Typical problems</h3>
+			<ul>
+				<li>
+					A process runs on spreadsheets, email and paperwork that are hard to
+					keep in order.
+				</li>
+				<li>
+					Several people need to work with the same information from different
+					places.
+				</li>
+				<li>Ready-made software does not fit the way you work.</li>
+			</ul>
+		</div>
+	</section>
+	<section class="page-width service" id="custom-online-tools">
+		<header>
+			<p class="number">03</p>
+			<h2>Custom online tools</h2>
+		</header>
+		<div class="details">
+			<p>
+				A custom online tool does one specific job in the browser, built around
+				the way you work: for example a price calculator, a quote builder or a
+				form that collects exactly the information you need.
+			</p>
+			<h3>Typical problems</h3>
+			<ul>
+				<li>A repetitive task takes time that a simple tool could save.</li>
+				<li>
+					The same questions come up again and again, and a tool could answer
+					them straight away.
+				</li>
+				<li>No ready-made tool does exactly what you need.</li>
+			</ul>
+		</div>
+	</section>
+	<section class="page-width service" id="other-web-projects">
+		<header>
+			<p class="number">04</p>
+			<h2>Other web projects</h2>
+		</header>
+		<div class="details">
+			<p>
+				Not every idea fits neatly into one of the categories above. This
+				service covers other web-based projects, for example a prototype that
+				tests an idea before it is fully built.
+			</p>
+			<h3>Typical problems</h3>
+			<ul>
+				<li>
+					You want to try an idea with real users before committing to a full
+					build.
+				</li>
+				<li>The project needs parts of more than one of the services above.</li>
+				<li>
+					The idea is new and does not match a familiar type of website or
+					application.
+				</li>
+			</ul>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.intro {
+		padding-block: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+	}
+
+	h1 {
+		margin: 0;
+		font-size: clamp(2.25rem, 1.5rem + 3.5vw, 4rem);
+		font-weight: 400;
+		line-height: 1.08;
+	}
+
+	.lead {
+		max-width: 60ch;
+		margin: 1.25rem 0 0;
+		font-size: clamp(1.0625rem, 1rem + 0.5vw, 1.25rem);
+	}
+
+	.service {
+		display: grid;
+		gap: 1.25rem;
+		padding-block: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+		border-top: 1px solid var(--color-rule-light);
+	}
+
+	.number {
+		margin: 0 0 0.5rem;
+		color: var(--color-muted);
+		font-size: 0.8125rem;
+		letter-spacing: 0.16em;
+	}
+
+	h2 {
+		margin: 0;
+		font-size: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
+		font-weight: 400;
+		line-height: 1.15;
+	}
+
+	.details {
+		max-width: 60ch;
+	}
+
+	.details p {
+		margin: 0;
+	}
+
+	h3 {
+		margin: 1.5rem 0 0.5rem;
+		color: var(--color-muted);
+		font-size: 0.8125rem;
+		font-weight: 400;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+	}
+
+	ul {
+		margin: 0;
+		padding-inline-start: 1.25rem;
+	}
+
+	li + li {
+		margin-block-start: 0.375rem;
+	}
+
+	@media (min-width: 48rem) {
+		.service {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+			column-gap: 3rem;
+		}
+	}
+</style>
