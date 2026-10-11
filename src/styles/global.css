@@ -1,0 +1,25 @@
+/* Site-wide styles: the brand colour tokens, the light-only colour scheme, the page colours and base typography, a page column at least as tall as the window (the footer fills any space left on short pages), and the shared content width. */
+:root {
+	--color-deep-green: #172019;
+	--color-ivory: #f4f5ef;
+	--color-lime: #c7f58b;
+	--color-sage: #aab7ab;
+	--color-rule-dark: #354236;
+	color-scheme: only light;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	min-height: 100dvh;
+	margin: 0;
+	background-color: var(--color-ivory);
+	color: var(--color-deep-green);
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+}
+
+.page-width {
+	width: min(100% - 2 * clamp(1.25rem, 5vw, 3rem), 72rem);
+	margin-inline: auto;
+}

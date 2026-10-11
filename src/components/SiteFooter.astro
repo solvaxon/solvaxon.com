@@ -1,0 +1,31 @@
+---
+// Site footer: the light Solvaxon wordmark on the deep-green band, below a hairline rule, that closes every page and fills the rest of the window on short pages.
+import wordmark from "../assets/brand/solvaxon-wordmark-light.svg";
+---
+
+<footer class="site-footer">
+	<div class="page-width">
+		<img
+			class="wordmark"
+			src={wordmark.src}
+			width={wordmark.width}
+			height={wordmark.height}
+			alt="Solvaxon"
+		/>
+	</div>
+</footer>
+
+<style>
+	.site-footer {
+		flex-grow: 1;
+		padding-block: 2.5rem;
+		border-top: 1px solid var(--color-rule-dark);
+		background-color: var(--color-deep-green);
+	}
+
+	.wordmark {
+		display: block;
+		width: 8rem;
+		height: auto;
+	}
+</style>

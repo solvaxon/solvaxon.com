@@ -1,0 +1,49 @@
+---
+// Shared page layout: imports the global stylesheet and renders the full HTML document: the document language; the head with the character encoding, viewport, title, description, canonical URL, icons, and Open Graph metadata; and the body with the site header, the page's main content, and the site footer.
+import "../styles/global.css";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { sharingImage, siteName } from "../lib/site";
+
+interface Props {
+	title: string;
+	description: string;
+}
+
+const { title, description } = Astro.props;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const sharingImageUrl = new URL(sharingImage.path, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en-GB">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalUrl} />
+		<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+		<link rel="icon" href="/favicon-96.png" sizes="96x96" />
+		<link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+		<meta property="og:title" content={title} />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:image" content={sharingImageUrl} />
+		<meta property="og:image:type" content={sharingImage.type} />
+		<meta property="og:image:width" content={String(sharingImage.width)} />
+		<meta property="og:image:height" content={String(sharingImage.height)} />
+		<meta property="og:image:alt" content={sharingImage.alt} />
+		<meta property="og:description" content={description} />
+		<meta property="og:site_name" content={siteName} />
+		<meta property="og:locale" content="en_GB" />
+	</head>
+	<body>
+		<SiteHeader />
+		<main>
+			<slot />
+		</main>
+		<SiteFooter />
+	</body>
+</html>

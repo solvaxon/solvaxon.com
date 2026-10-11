@@ -1,0 +1,32 @@
+---
+// Site header: the dark Solvaxon wordmark on the page's ivory background, as the link to the home page.
+import wordmark from "../assets/brand/solvaxon-wordmark-dark.svg";
+---
+
+<header class="page-width site-header">
+	<a class="home-link" href="/">
+		<img
+			class="wordmark"
+			src={wordmark.src}
+			width={wordmark.width}
+			height={wordmark.height}
+			alt="Solvaxon home"
+		/>
+	</a>
+</header>
+
+<style>
+	.site-header {
+		padding-block: 1.25rem;
+	}
+
+	.home-link {
+		display: inline-block;
+	}
+
+	.wordmark {
+		display: block;
+		width: clamp(8.5rem, 7rem + 4vw, 11rem);
+		height: auto;
+	}
+</style>
