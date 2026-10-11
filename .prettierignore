@@ -1,0 +1,2 @@
+# Files Prettier skips in addition to the .gitignore paths: the lockfile, which npm generates.
+package-lock.json

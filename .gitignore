@@ -1,0 +1,5 @@
+# Paths Git ignores, as Astro recommends: Astro's generated files (.astro/, dist/), the local .env file, and installed dependencies.
+.astro/
+.env
+dist/
+node_modules/

@@ -1,0 +1,2 @@
+# Line endings: files Git detects as text are stored with LF and checked out with LF on every platform.
+* text=auto eol=lf
