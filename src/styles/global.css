@@ -1,4 +1,4 @@
-/* Site-wide styles: the brand colour tokens, the light-only colour scheme, the page colours and base typography, a page column at least as tall as the window (the footer fills any space left on short pages), and the shared content width. */
+/* Site-wide styles: the brand colour tokens, the light-only colour scheme, the page colours and base typography, links in the colour of the text around them, a page column at least as tall as the window (the footer fills any space left on short pages), the shared content width, and two parts shared by the Services and About pages: an introduction with the main heading and a lead paragraph, and numbered sections, each below a hairline rule, with the number and heading placed beside the section text when the viewport is at least 48rem wide. */
 :root {
 	--color-deep-green: #172019;
 	--color-ivory: #f4f5ef;
@@ -21,7 +21,68 @@ body {
 	line-height: 1.5;
 }
 
+a {
+	color: inherit;
+}
+
 .page-width {
 	width: min(100% - 2 * clamp(1.25rem, 5vw, 3rem), 72rem);
 	margin-inline: auto;
+}
+
+.page-intro {
+	padding-block: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+}
+
+.page-intro h1 {
+	margin: 0;
+	font-size: clamp(2.25rem, 1.5rem + 3.5vw, 4rem);
+	font-weight: 400;
+	line-height: 1.08;
+}
+
+.page-intro .lead {
+	max-width: 60ch;
+	margin: 1.25rem 0 0;
+	font-size: clamp(1.0625rem, 1rem + 0.5vw, 1.25rem);
+}
+
+.numbered-section {
+	display: grid;
+	gap: 1.25rem;
+	padding-block: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+	border-top: 1px solid var(--color-rule-light);
+}
+
+.numbered-section .number {
+	margin: 0 0 0.5rem;
+	color: var(--color-muted);
+	font-size: 0.8125rem;
+	letter-spacing: 0.16em;
+}
+
+.numbered-section h2 {
+	margin: 0;
+	font-size: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
+	font-weight: 400;
+	line-height: 1.15;
+}
+
+.numbered-section .details {
+	max-width: 60ch;
+}
+
+.numbered-section .details p {
+	margin: 0;
+}
+
+.numbered-section .details p + p {
+	margin-block-start: 1rem;
+}
+
+@media (min-width: 48rem) {
+	.numbered-section {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+		column-gap: 3rem;
+	}
 }

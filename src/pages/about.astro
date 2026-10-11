@@ -1,0 +1,51 @@
+---
+// About page: the page title and description; an introduction with the main heading and a lead paragraph that links to the Services page; and two numbered sections, on where Solvaxon is based and who can work with it, and on what the name and the logo stand for and how the same idea guides the work. The introduction and numbered sections use the shared styles in global.css (each section below a hairline rule, its number and heading placed beside the text when the viewport is at least 48rem wide).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { aboutPage, servicesPage, siteName } from "../lib/site";
+
+const description =
+	"About Solvaxon: what it builds, where it is based and who can work with it, and what its name and logo stand for.";
+---
+
+<BaseLayout title={`${aboutPage.name} - ${siteName}`} description={description}>
+	<div class="page-width page-intro">
+		<h1>{`${aboutPage.name} ${siteName}`}</h1>
+		<p class="lead">
+			Solvaxon helps individuals and businesses bring ideas to life and solve
+			practical problems by building websites, web applications, custom online
+			tools and other web-based projects. Each kind of work is described on the
+			<a href={servicesPage.path}>{servicesPage.name} page</a>.
+		</p>
+	</div>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">01</p>
+			<h2>Where Solvaxon works</h2>
+		</header>
+		<div class="details">
+			<p>
+				Solvaxon is based in Jordan, and its work is not limited to Jordan:
+				individuals and businesses in any country can work with Solvaxon in
+				English.
+			</p>
+		</div>
+	</section>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">02</p>
+			<h2>The name and the logo</h2>
+		</header>
+		<div class="details">
+			<p>
+				The idea behind the name is solving for X. In the Solvaxon logo, the X
+				has an open route through its centre. The X stands for the unknown, and
+				the open route stands for the solution: a clear path through the
+				unknown.
+			</p>
+			<p>
+				Solvaxon's work follows the same idea: understand the problem, structure
+				it and turn it into a finished product.
+			</p>
+		</div>
+	</section>
+</BaseLayout>

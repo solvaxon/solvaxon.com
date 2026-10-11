@@ -1,5 +1,5 @@
 ---
-// Services page: the page title and description; an introduction with the main heading and a lead paragraph; and one section for each of the four services (websites, web applications, custom online tools, and other web projects), each below a hairline rule, with an anchor for direct links, its number and name, what the service is, and the typical problems it solves, the number and name placed beside the rest when the viewport is at least 48rem wide.
+// Services page: the page title and description; an introduction with the main heading and a lead paragraph; and one numbered section for each of the four services (websites, web applications, custom online tools, and other web projects), with an anchor for direct links, its number and name, what the service is, and the typical problems it solves. The introduction and numbered sections use the shared styles in global.css (each section below a hairline rule, its number and name placed beside the rest when the viewport is at least 48rem wide); this file styles the "Typical problems" label and list.
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { servicesPage, siteName } from "../lib/site";
 
@@ -11,7 +11,7 @@ const description =
 	title={`${servicesPage.name} - ${siteName}`}
 	description={description}
 >
-	<div class="page-width intro">
+	<div class="page-width page-intro">
 		<h1>{servicesPage.name}</h1>
 		<p class="lead">
 			Solvaxon builds websites, web applications, custom online tools and other
@@ -19,7 +19,7 @@ const description =
 			explains what the work is and the typical problems it solves.
 		</p>
 	</div>
-	<section class="page-width service" id="websites">
+	<section class="page-width numbered-section" id="websites">
 		<header>
 			<p class="number">01</p>
 			<h2>Websites</h2>
@@ -45,7 +45,7 @@ const description =
 			</ul>
 		</div>
 	</section>
-	<section class="page-width service" id="web-applications">
+	<section class="page-width numbered-section" id="web-applications">
 		<header>
 			<p class="number">02</p>
 			<h2>Web applications</h2>
@@ -70,7 +70,7 @@ const description =
 			</ul>
 		</div>
 	</section>
-	<section class="page-width service" id="custom-online-tools">
+	<section class="page-width numbered-section" id="custom-online-tools">
 		<header>
 			<p class="number">03</p>
 			<h2>Custom online tools</h2>
@@ -92,7 +92,7 @@ const description =
 			</ul>
 		</div>
 	</section>
-	<section class="page-width service" id="other-web-projects">
+	<section class="page-width numbered-section" id="other-web-projects">
 		<header>
 			<p class="number">04</p>
 			<h2>Other web projects</h2>
@@ -120,52 +120,6 @@ const description =
 </BaseLayout>
 
 <style>
-	.intro {
-		padding-block: clamp(2.5rem, 1.5rem + 4vw, 5rem);
-	}
-
-	h1 {
-		margin: 0;
-		font-size: clamp(2.25rem, 1.5rem + 3.5vw, 4rem);
-		font-weight: 400;
-		line-height: 1.08;
-	}
-
-	.lead {
-		max-width: 60ch;
-		margin: 1.25rem 0 0;
-		font-size: clamp(1.0625rem, 1rem + 0.5vw, 1.25rem);
-	}
-
-	.service {
-		display: grid;
-		gap: 1.25rem;
-		padding-block: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
-		border-top: 1px solid var(--color-rule-light);
-	}
-
-	.number {
-		margin: 0 0 0.5rem;
-		color: var(--color-muted);
-		font-size: 0.8125rem;
-		letter-spacing: 0.16em;
-	}
-
-	h2 {
-		margin: 0;
-		font-size: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
-		font-weight: 400;
-		line-height: 1.15;
-	}
-
-	.details {
-		max-width: 60ch;
-	}
-
-	.details p {
-		margin: 0;
-	}
-
 	h3 {
 		margin: 1.5rem 0 0.5rem;
 		color: var(--color-muted);
@@ -182,12 +136,5 @@ const description =
 
 	li + li {
 		margin-block-start: 0.375rem;
-	}
-
-	@media (min-width: 48rem) {
-		.service {
-			grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-			column-gap: 3rem;
-		}
 	}
 </style>

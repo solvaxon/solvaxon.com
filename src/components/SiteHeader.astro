@@ -1,7 +1,7 @@
 ---
-// Site header: on the page's ivory background, the dark Solvaxon wordmark as the link to the home page, and the site navigation with a text link to the Services page, at the far end of the same line or, when the header is too narrow for both, on its own line below the wordmark.
+// Site header: on the page's ivory background, the dark Solvaxon wordmark as the link to the home page, and the site navigation with text links to the Services and About pages side by side, at the far end of the same line or, when the header is too narrow for both, on its own line below the wordmark.
 import wordmark from "../assets/brand/solvaxon-wordmark-dark.svg";
-import { servicesPage } from "../lib/site";
+import { aboutPage, servicesPage } from "../lib/site";
 ---
 
 <header class="page-width site-header">
@@ -16,6 +16,7 @@ import { servicesPage } from "../lib/site";
 	</a>
 	<nav class="site-nav">
 		<a href={servicesPage.path}>{servicesPage.name}</a>
+		<a href={aboutPage.path}>{aboutPage.name}</a>
 	</nav>
 </header>
 
@@ -35,7 +36,8 @@ import { servicesPage } from "../lib/site";
 		height: auto;
 	}
 
-	.site-nav a {
-		color: inherit;
+	.site-nav {
+		display: flex;
+		column-gap: 1.5rem;
 	}
 </style>
