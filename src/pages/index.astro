@@ -1,10 +1,27 @@
 ---
-// Home page: the page title and description; the deep-green hero with its label, main heading, hairline rule, lead paragraph (the description text), and the ivory Solvaxon symbol as a decorative background; the section on what Solvaxon builds, with its heading and a numbered list with one row per service, each below a hairline rule: the service's number and its name, which links to the service's section on the Services page (the name and the link target come from site.ts), with a short summary below them, or beside them when the viewport is at least 48rem wide; and, below a hairline rule, the section on how Solvaxon works, with its heading and the four steps on the route line, a deep-green line with a square stop centred on it at each step, running down the side of the steps, or along the top of four columns when the viewport is at least 48rem wide.
+// Home page: the page title and description; the deep-green hero with its label, main heading, hairline rule, lead paragraph (the description text), and the ivory Solvaxon symbol as a decorative background; the section on what Solvaxon builds, with its heading and a numbered list with one row per service, each below a hairline rule: the service's number and its name, which links to the service's section on the Services page (the name and the link target come from site.ts), with a short summary below them, or beside them when the viewport is at least 48rem wide; below a hairline rule, the section on how Solvaxon works, with its heading and the four steps on the route line, a deep-green line with a square stop centred on it at each step, running down the side of the steps, or along the top of four columns when the viewport is at least 48rem wide; and, at the end of the page content, the structured data for search engines: a JSON-LD script element with WebSite data (the site name and the home page URL) and Organization data (the same name and URL, the URL of the square Solvaxon logo, and the description text).
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { services, servicesPage, siteName } from "../lib/site";
 
 const description =
 	"Solvaxon builds websites, web applications, custom online tools and other web-based projects that help individuals and businesses bring ideas to life and solve practical problems.";
+const homeUrl = new URL("/", Astro.site).href;
+const structuredData = [
+	{
+		"@context": "https://schema.org",
+		"@type": "WebSite",
+		name: siteName,
+		url: homeUrl,
+	},
+	{
+		"@context": "https://schema.org",
+		"@type": "Organization",
+		name: siteName,
+		url: homeUrl,
+		logo: new URL("/solvaxon-square.png", Astro.site).href,
+		description,
+	},
+];
 ---
 
 <BaseLayout
@@ -92,6 +109,10 @@ const description =
 			<li>Deliver the finished product</li>
 		</ol>
 	</section>
+	<script
+		type="application/ld+json"
+		set:html={JSON.stringify(structuredData)}
+	/>
 </BaseLayout>
 
 <style>
