@@ -1,7 +1,7 @@
 ---
-// Home page: the page title and description, and the deep-green hero with its label, main heading, hairline rule, lead paragraph (the description text), and the ivory Solvaxon symbol as a decorative background.
+// Home page: the page title and description; the deep-green hero with its label, main heading, hairline rule, lead paragraph (the description text), and the ivory Solvaxon symbol as a decorative background; the section on what Solvaxon builds, with its heading and a numbered list with one row per service, each below a hairline rule: the service's number and its name, which links to the service's section on the Services page (the name and the link target come from site.ts), with a short summary below them, or beside them when the viewport is at least 48rem wide; and, below a hairline rule, the section on how Solvaxon works, with its heading and the four steps on the route line, a deep-green line with a square stop centred on it at each step, running down the side of the steps, or along the top of four columns when the viewport is at least 48rem wide.
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { siteName } from "../lib/site";
+import { services, servicesPage, siteName } from "../lib/site";
 
 const description =
 	"Solvaxon builds websites, web applications, custom online tools and other web-based projects that help individuals and businesses bring ideas to life and solve practical problems.";
@@ -21,6 +21,77 @@ const description =
 			<p class="lead">{description}</p>
 		</div>
 	</div>
+	<section class="page-width builds">
+		<h2>What Solvaxon builds</h2>
+		<ol class="build-list">
+			<li>
+				<header>
+					<p class="number">01</p>
+					<h3>
+						<a href={`${servicesPage.path}#${services.websites.anchor}`}>
+							{services.websites.name}
+						</a>
+					</h3>
+				</header>
+				<p>A home on the web for a person, a business or an idea.</p>
+			</li>
+			<li>
+				<header>
+					<p class="number">02</p>
+					<h3>
+						<a href={`${servicesPage.path}#${services.webApplications.anchor}`}>
+							{services.webApplications.name}
+						</a>
+					</h3>
+				</header>
+				<p>
+					Software that people use in a web browser to get work done, without
+					installing anything.
+				</p>
+			</li>
+			<li>
+				<header>
+					<p class="number">03</p>
+					<h3>
+						<a
+							href={`${servicesPage.path}#${services.customOnlineTools.anchor}`}
+						>
+							{services.customOnlineTools.name}
+						</a>
+					</h3>
+				</header>
+				<p>
+					A tool that does one specific job in the browser, built around the way
+					you work.
+				</p>
+			</li>
+			<li>
+				<header>
+					<p class="number">04</p>
+					<h3>
+						<a
+							href={`${servicesPage.path}#${services.otherWebProjects.anchor}`}
+						>
+							{services.otherWebProjects.name}
+						</a>
+					</h3>
+				</header>
+				<p>
+					Web-based projects that do not fit neatly into the categories above,
+					for example a prototype that tests an idea before it is fully built.
+				</p>
+			</li>
+		</ol>
+	</section>
+	<section class="page-width process">
+		<h2>How Solvaxon works</h2>
+		<ol class="route">
+			<li>Understand the problem</li>
+			<li>Structure the solution</li>
+			<li>Build the product</li>
+			<li>Deliver the finished product</li>
+		</ol>
+	</section>
 </BaseLayout>
 
 <style>
@@ -82,6 +153,101 @@ const description =
 		max-width: 60ch;
 		margin: 0;
 		font-size: clamp(1.0625rem, 1rem + 0.5vw, 1.25rem);
+	}
+
+	.builds {
+		padding-block-start: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+	}
+
+	.build-list {
+		margin: clamp(1.5rem, 1rem + 2vw, 2.5rem) 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.build-list li {
+		display: grid;
+		gap: 0.75rem;
+		padding-block: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+		border-top: 1px solid var(--color-rule-light);
+	}
+
+	.build-list h3 {
+		margin: 0;
+		font-size: clamp(1.25rem, 1.125rem + 0.625vw, 1.5rem);
+		font-weight: 400;
+		line-height: 1.2;
+	}
+
+	.build-list li > p {
+		max-width: 60ch;
+		margin: 0;
+	}
+
+	.process {
+		padding-block: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+		border-top: 1px solid var(--color-rule-light);
+	}
+
+	.route {
+		--line-width: 1px;
+		--stop-size: 9px;
+		margin: clamp(1.5rem, 1rem + 2vw, 2.5rem) 0 0
+			calc((var(--stop-size) - var(--line-width)) / 2);
+		padding: 0;
+		border-left: var(--line-width) solid var(--color-deep-green);
+		list-style: none;
+	}
+
+	.route li {
+		position: relative;
+		padding-inline-start: 1.5rem;
+		font-size: clamp(1.25rem, 1.125rem + 0.625vw, 1.5rem);
+		line-height: 1.2;
+	}
+
+	.route li + li {
+		margin-block-start: 1.5rem;
+	}
+
+	.route li::before {
+		content: "";
+		position: absolute;
+		top: calc(0.6em - var(--stop-size) / 2);
+		left: calc((var(--line-width) + var(--stop-size)) / -2);
+		width: var(--stop-size);
+		height: var(--stop-size);
+		background-color: var(--color-deep-green);
+	}
+
+	@media (min-width: 48rem) {
+		.build-list li {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+			column-gap: 3rem;
+		}
+
+		.route {
+			display: grid;
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+			column-gap: 1.5rem;
+			margin-inline-start: 0;
+			border-top: var(--line-width) solid var(--color-deep-green);
+			border-left: none;
+		}
+
+		.route li {
+			padding-block-start: 1.5rem;
+			padding-inline-start: 0;
+		}
+
+		.route li + li {
+			margin-block-start: 0;
+		}
+
+		.route li::before {
+			top: calc((var(--line-width) + var(--stop-size)) / -2);
+			left: 0;
+		}
 	}
 
 	@media (min-width: 64rem) {

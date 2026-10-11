@@ -1,4 +1,4 @@
-/* Site-wide styles: the brand colour tokens, the light-only colour scheme, the page colours and base typography, links in the colour of the text around them, a page column at least as tall as the window (the footer fills any space left on short pages), the shared content width, and two parts shared by the Services and About pages: an introduction with the main heading and a lead paragraph, and numbered sections, each below a hairline rule, with the number and heading placed beside the section text when the viewport is at least 48rem wide. */
+/* Site-wide styles: the brand colour tokens, the light-only colour scheme, the page colours and base typography, links in the colour of the text around them, second-level headings, a page column at least as tall as the window (the footer fills any space left on short pages), the shared content width, number labels (in the numbered sections of the Services and About pages and in the home page's list of what Solvaxon builds), and two parts shared by the Services and About pages: an introduction with the main heading and a lead paragraph, and numbered sections, each below a hairline rule, with the number and heading placed beside the section text when the viewport is at least 48rem wide. */
 :root {
 	--color-deep-green: #172019;
 	--color-ivory: #f4f5ef;
@@ -25,9 +25,23 @@ a {
 	color: inherit;
 }
 
+h2 {
+	margin: 0;
+	font-size: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
+	font-weight: 400;
+	line-height: 1.15;
+}
+
 .page-width {
 	width: min(100% - 2 * clamp(1.25rem, 5vw, 3rem), 72rem);
 	margin-inline: auto;
+}
+
+.number {
+	margin: 0 0 0.5rem;
+	color: var(--color-muted);
+	font-size: 0.8125rem;
+	letter-spacing: 0.16em;
 }
 
 .page-intro {
@@ -52,20 +66,6 @@ a {
 	gap: 1.25rem;
 	padding-block: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
 	border-top: 1px solid var(--color-rule-light);
-}
-
-.numbered-section .number {
-	margin: 0 0 0.5rem;
-	color: var(--color-muted);
-	font-size: 0.8125rem;
-	letter-spacing: 0.16em;
-}
-
-.numbered-section h2 {
-	margin: 0;
-	font-size: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
-	font-weight: 400;
-	line-height: 1.15;
 }
 
 .numbered-section .details {

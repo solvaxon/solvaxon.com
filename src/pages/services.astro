@@ -1,7 +1,7 @@
 ---
-// Services page: the page title and description; an introduction with the main heading and a lead paragraph; and one numbered section for each of the four services (websites, web applications, custom online tools, and other web projects), with an anchor for direct links, its number and name, what the service is, and the typical problems it solves. The introduction and numbered sections use the shared styles in global.css (each section below a hairline rule, its number and name placed beside the rest when the viewport is at least 48rem wide); this file styles the "Typical problems" label and list.
+// Services page: the page title and description; an introduction with the main heading and a lead paragraph; and one numbered section for each of the four services (websites, web applications, custom online tools, and other web projects), with an anchor for direct links, its number and name (the anchor and name come from site.ts, which the home page also uses for its links to these sections), what the service is, and the typical problems it solves. The introduction and numbered sections use the shared styles in global.css (each section below a hairline rule, its number and name placed beside the rest when the viewport is at least 48rem wide); this file styles the "Typical problems" label and list.
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { servicesPage, siteName } from "../lib/site";
+import { services, servicesPage, siteName } from "../lib/site";
 
 const description =
 	"Solvaxon's services: websites, web applications, custom online tools and other web-based projects, each with what it is and the typical problems it solves.";
@@ -19,10 +19,10 @@ const description =
 			explains what the work is and the typical problems it solves.
 		</p>
 	</div>
-	<section class="page-width numbered-section" id="websites">
+	<section class="page-width numbered-section" id={services.websites.anchor}>
 		<header>
 			<p class="number">01</p>
-			<h2>Websites</h2>
+			<h2>{services.websites.name}</h2>
 		</header>
 		<div class="details">
 			<p>
@@ -45,10 +45,13 @@ const description =
 			</ul>
 		</div>
 	</section>
-	<section class="page-width numbered-section" id="web-applications">
+	<section
+		class="page-width numbered-section"
+		id={services.webApplications.anchor}
+	>
 		<header>
 			<p class="number">02</p>
-			<h2>Web applications</h2>
+			<h2>{services.webApplications.name}</h2>
 		</header>
 		<div class="details">
 			<p>
@@ -70,10 +73,13 @@ const description =
 			</ul>
 		</div>
 	</section>
-	<section class="page-width numbered-section" id="custom-online-tools">
+	<section
+		class="page-width numbered-section"
+		id={services.customOnlineTools.anchor}
+	>
 		<header>
 			<p class="number">03</p>
-			<h2>Custom online tools</h2>
+			<h2>{services.customOnlineTools.name}</h2>
 		</header>
 		<div class="details">
 			<p>
@@ -92,10 +98,13 @@ const description =
 			</ul>
 		</div>
 	</section>
-	<section class="page-width numbered-section" id="other-web-projects">
+	<section
+		class="page-width numbered-section"
+		id={services.otherWebProjects.anchor}
+	>
 		<header>
 			<p class="number">04</p>
-			<h2>Other web projects</h2>
+			<h2>{services.otherWebProjects.name}</h2>
 		</header>
 		<div class="details">
 			<p>
