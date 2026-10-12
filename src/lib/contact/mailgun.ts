@@ -1,4 +1,4 @@
-// Mailgun delivery: sends an enquiry as a plain-text email to the private destination address with Mailgun's send API, at the API base URL of the sending domain's region, authenticated with HTTP Basic auth (user api, password the sending key). The email comes from the name Solvaxon website and the address contact-form at the sending domain; its subject is "Website enquiry from" followed by the visitor's name; its Reply-To is the visitor's email address; click and open tracking are off; and its text is three labelled lines (the visitor's name, email address, and consent time), a blank line, and the message. There is one attempt, with a 10000 ms timeout and no retry, because a send that timed out may still have been accepted. The result is sent (with Mailgun's message id), unavailable (HTTP 429 or 5xx, a timeout, or a network error), or rejected (any other HTTP status except 200); a 200 response whose body is not JSON or has no message id makes the send throw.
+// Mailgun delivery: sends an enquiry as a plain-text email to the private destination address with Mailgun's send API, at the API base URL of the sending domain's region, authenticated with HTTP Basic auth (user api, password the sending key). The email comes from the name Solvaxon website and the address contact-form at the sending domain; its subject is "Website enquiry from" followed by the visitor's name; its Reply-To is the visitor's email address; click and open tracking are off; and its text is three labelled lines (the visitor's name, the visitor's email address, and the consent time followed by the name and version of the Privacy Policy, for example "Privacy Policy 2026-10-12"), a blank line, and the message. There is one attempt, with a 10000 ms timeout and no retry, because a send that timed out may still have been accepted. The result is sent (with Mailgun's message id), unavailable (HTTP 429 or 5xx, a timeout, or a network error), or rejected (any other HTTP status except 200); a 200 response whose body is not JSON or has no message id makes the send throw.
 import { Buffer } from "node:buffer";
 import {
 	CONTACT_TO_ADDRESS,
@@ -6,6 +6,7 @@ import {
 	MAILGUN_REGION,
 	MAILGUN_SENDING_KEY,
 } from "astro:env/server";
+import { privacyPage } from "../site";
 
 export interface Enquiry {
 	name: string;
@@ -47,7 +48,7 @@ export async function sendEnquiry(enquiry: Enquiry): Promise<DeliveryResult> {
 	form.append("subject", `Website enquiry from ${enquiry.name}`);
 	form.append(
 		"text",
-		`Name: ${enquiry.name}\nEmail: ${enquiry.email}\nConsent: given ${enquiry.consentTime}\n\n${enquiry.message}`,
+		`Name: ${enquiry.name}\nEmail: ${enquiry.email}\nConsent: given ${enquiry.consentTime}, ${privacyPage.name} ${privacyPage.lastUpdated}\n\n${enquiry.message}`,
 	);
 	form.append("h:Reply-To", enquiry.email);
 	form.append("o:tracking-clicks", "no");

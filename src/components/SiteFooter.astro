@@ -1,10 +1,11 @@
 ---
-// Site footer: the light Solvaxon wordmark on the deep-green band, below a hairline rule, that closes every page and fills the rest of the window on short pages.
+// Site footer: the deep-green band, below a hairline rule, that closes every page and fills the rest of the window on short pages, with the light Solvaxon wordmark and two ivory, underlined links: the public email address, which opens a new email to that address and is marked as the page's contact information, and the link to the Privacy Policy page. The links sit side by side at the far end of the wordmark's line or, when the footer is too narrow for the wordmark and the links on one line, below the wordmark; where even that line is too narrow for both links, the second link moves onto a line of its own.
 import wordmark from "../assets/brand/solvaxon-wordmark-light.svg";
+import { privacyPage, publicEmail } from "../lib/site";
 ---
 
 <footer class="site-footer">
-	<div class="page-width">
+	<div class="page-width footer-layout">
 		<img
 			class="wordmark"
 			src={wordmark.src}
@@ -12,6 +13,12 @@ import wordmark from "../assets/brand/solvaxon-wordmark-light.svg";
 			height={wordmark.height}
 			alt="Solvaxon"
 		/>
+		<div class="footer-links">
+			<address>
+				<a href={`mailto:${publicEmail}`}>{publicEmail}</a>
+			</address>
+			<a href={privacyPage.path}>{privacyPage.name}</a>
+		</div>
 	</div>
 </footer>
 
@@ -21,11 +28,30 @@ import wordmark from "../assets/brand/solvaxon-wordmark-light.svg";
 		padding-block: 2.5rem;
 		border-top: 1px solid var(--color-rule-dark);
 		background-color: var(--color-deep-green);
+		color: var(--color-ivory);
+	}
+
+	.footer-layout {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem 2rem;
 	}
 
 	.wordmark {
 		display: block;
 		width: 8rem;
 		height: auto;
+	}
+
+	.footer-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.5rem;
+	}
+
+	address {
+		font-style: normal;
 	}
 </style>

@@ -1,4 +1,4 @@
-/* Site-wide styles: the brand colour tokens, the light-only colour scheme, the page colours and base typography, links in the colour of the text around them, second-level headings, a page column at least as tall as the window (the footer fills any space left on short pages), the shared content width, number labels (in the numbered sections of the Services and About pages and in the home page's list of what Solvaxon builds), and two parts shared by the Services and About pages: an introduction with the main heading and a lead paragraph, and numbered sections, each below a hairline rule, with the number and heading placed beside the section text when the viewport is at least 48rem wide. */
+/* Site-wide styles: the brand colour tokens, the light-only colour scheme, the page colours and base typography, links in the colour of the text around them, second-level headings, a page column at least as tall as the window (the footer fills any space left on short pages), the shared content width, number labels (in the numbered sections and in the home page's list of what Solvaxon builds), an introduction with the main heading and a lead paragraph (on the Services, About, Privacy Policy, and not-found pages), and numbered sections (on the Services, About, and Privacy Policy pages), each below a hairline rule, with the number and heading placed beside the section text when the viewport is at least 48rem wide; in the section text, a space between consecutive paragraphs and between a paragraph and a list next to it, and bulleted lists with a small space between their items. */
 :root {
 	--color-deep-green: #172019;
 	--color-ivory: #f4f5ef;
@@ -76,8 +76,19 @@ h2 {
 	margin: 0;
 }
 
-.numbered-section .details p + p {
+.numbered-section .details p + p,
+.numbered-section .details p + ul,
+.numbered-section .details ul + p {
 	margin-block-start: 1rem;
+}
+
+.numbered-section .details ul {
+	margin: 0;
+	padding-inline-start: 1.25rem;
+}
+
+.numbered-section .details li + li {
+	margin-block-start: 0.375rem;
 }
 
 @media (min-width: 48rem) {

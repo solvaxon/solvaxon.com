@@ -1,0 +1,453 @@
+---
+// Privacy Policy page: the page title and description; an introduction with the main heading, a lead paragraph, and the date of the last update, written out (for example 12 October 2026) in a time element that also gives it in machine-readable form (the date comes from site.ts, where it is also the policy's version); and twelve numbered sections: who is responsible, what Solvaxon collects, why it uses it, the four service providers that process it, the transfers outside Jordan, how long data is kept, cookies and the Turnstile check, the rights under Jordan's Personal Data Protection Law, consent and its withdrawal, how the data is protected, complaints, and changes to the policy. The sections' links to the public email address and to external pages and documents take their URLs from constants at the top of this file. The introduction, the numbered sections, and their lists use the shared styles in global.css; this file styles the date line.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { privacyPage, publicEmail, siteName } from "../lib/site";
+
+const description =
+	"How Solvaxon handles personal data when you visit solvaxon.com or send an enquiry: what is collected and why, who processes it and where, how long it is kept, and your rights.";
+const lastUpdated = new Intl.DateTimeFormat("en-GB", {
+	day: "numeric",
+	month: "long",
+	year: "numeric",
+	timeZone: "UTC",
+}).format(new Date(privacyPage.lastUpdated));
+const emailHref = `mailto:${publicEmail}`;
+const lawUrl =
+	"https://www.modee.gov.jo/EBV4.0/Root_Storage/EN/1/PDP_Law_-_English_Version-_officail_translation.pdf";
+const msSupportUrl =
+	"https://www.microsoft.com/en-us/privacy/privacy-support-requests";
+const turnstileUrl = "https://www.cloudflare.com/turnstile-privacy-policy/";
+const cloudflareUrl = "https://www.cloudflare.com/privacypolicy/";
+const mailgunUrl = "https://www.mailgun.com/legal/privacy-policy/";
+const microsoftUrl = "https://www.microsoft.com/en-us/privacy/privacystatement";
+const cookiesUrl =
+	"https://developers.cloudflare.com/fundamentals/reference/policies-compliances/cloudflare-cookies/";
+const formsUrl =
+	"https://www.modee.gov.jo/EN/List/The_law_regulations_and_instructions";
+const withdrawalUrl =
+	"https://www.modee.gov.jo/ebv4.0/root_storage/en/eb_list_page/withdrawal_prior_consent_form.pdf";
+const portalUrl = "https://jordan.gov.jo/en/custompages/onyourservice";
+---
+
+<BaseLayout
+	title={`${privacyPage.name} - ${siteName}`}
+	description={description}
+>
+	<div class="page-width page-intro">
+		<h1>{privacyPage.name}</h1>
+		<p class="lead">
+			This policy explains how Solvaxon handles personal data when you visit
+			solvaxon.com, send the contact form or email Solvaxon: what is collected
+			and why, who processes it and where, how long it is kept, and the rights
+			you have under Jordan's Personal Data Protection Law.
+		</p>
+		<p class="updated">
+			Last updated <time datetime={privacyPage.lastUpdated}>{lastUpdated}</time>
+		</p>
+	</div>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">01</p>
+			<h2>Who is responsible</h2>
+		</header>
+		<div class="details">
+			<p>
+				Solvaxon, which is based in Jordan, is run by Rayyan Tubaishat, who is
+				responsible for the personal data described in this policy: the
+				controller under Jordan's
+				<a href={lawUrl}>Personal Data Protection Law No. (24) of 2023</a>.
+			</p>
+			<p>
+				For any question about this policy or your personal data, email
+				<a href={emailHref}>{publicEmail}</a>.
+			</p>
+		</div>
+	</section>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">02</p>
+			<h2>What Solvaxon collects</h2>
+		</header>
+		<div class="details">
+			<p>
+				Solvaxon collects only what it needs to deliver the site and to answer
+				you. Processing starts when you open a page, send the contact form or
+				send an email.
+			</p>
+			<ul>
+				<li>
+					When you open a page: your IP address and the details of each request,
+					such as the address of the page and the type of browser, which
+					Cloudflare and the server need to deliver the page.
+				</li>
+				<li>
+					When you send the contact form: your name, email address and message,
+					your consent, the time the server received the form, and the version
+					of this policy. The server also keeps your IP address for a short time
+					to limit repeated attempts, and Cloudflare Turnstile checks that you
+					are not a bot.
+				</li>
+				<li>
+					When you email <a href={emailHref}>{publicEmail}</a>: your email
+					address, the name that your email program sends with it, and
+					everything you write or attach.
+				</li>
+			</ul>
+			<p>
+				You do not have to give any of this information, and no law or contract
+				requires it, but without your name, email address, message and consent
+				the form cannot be sent. Please do not include sensitive information,
+				such as details about your health, religion or finances, in your
+				message.
+			</p>
+		</div>
+	</section>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">03</p>
+			<h2>Why Solvaxon uses it</h2>
+		</header>
+		<div class="details">
+			<ul>
+				<li>
+					To read and answer your enquiry, and to continue the conversation that
+					follows.
+				</li>
+				<li>To deliver the site to your browser.</li>
+				<li>
+					To protect the site and the form from abuse: the Turnstile check, a
+					limit on repeated attempts from one IP address, and a check that stops
+					the same enquiry from being sent twice within an hour.
+				</li>
+			</ul>
+			<p>
+				Solvaxon processes the information you send with your consent, which you
+				give by ticking the consent box on the contact form or by sending an
+				email. Solvaxon does not use your information for marketing, does not
+				sell it, does not build a profile of you and makes no automated
+				decisions about you. The site uses no analytics or tracking.
+			</p>
+		</div>
+	</section>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">04</p>
+			<h2>Who else processes it</h2>
+		</header>
+		<div class="details">
+			<p>
+				Four service providers process personal data for Solvaxon, each to
+				provide its service:
+			</p>
+			<ul>
+				<li>
+					Cloudflare, Inc., in the United States, carries all traffic between
+					your browser and solvaxon.com as the site's secure proxy, so it
+					handles your IP address and everything your browser sends to and
+					receives from the site, including the contact form. It also runs
+					Turnstile on the contact page. Contact:
+					<a href="mailto:dpo@cloudflare.com">dpo@cloudflare.com</a>.
+				</li>
+				<li>
+					nexserv GmbH, which runs Venocix Hosting in Germany, provides the
+					server in Frankfurt, Germany, that runs the site and passes your
+					enquiry to Mailgun. Contact:
+					<a href="mailto:support@venocix.de">support@venocix.de</a>.
+				</li>
+				<li>
+					Mailgun, part of the Sinch group, sends each enquiry from the contact
+					form as an email to Solvaxon's private mailbox. Contact:
+					<a href="mailto:dpo@sinch.com">dpo@sinch.com</a>.
+				</li>
+				<li>
+					Microsoft hosts Solvaxon's mailboxes, including {publicEmail}, where
+					your enquiry, your emails and the replies to them are stored. Contact:
+					<a href={msSupportUrl}>Microsoft's privacy support page</a>.
+				</li>
+			</ul>
+			<p>
+				Cloudflare also uses the signals that Turnstile collects to improve
+				Turnstile, as a controller in its own right, as
+				<a href={turnstileUrl}>Cloudflare's Turnstile privacy addendum</a>
+				describes. Cloudflare, Mailgun and Microsoft explain how they handle
+				personal data in their own policies:
+				<a href={cloudflareUrl}>Cloudflare's privacy policy</a>,
+				<a href={mailgunUrl}>Mailgun's privacy policy</a> and
+				<a href={microsoftUrl}>Microsoft's privacy statement</a>.
+			</p>
+		</div>
+	</section>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">05</p>
+			<h2>Transfers outside Jordan</h2>
+		</header>
+		<div class="details">
+			<p>These providers process your data outside Jordan:</p>
+			<ul>
+				<li>
+					in Germany, where the server runs, and in Germany and Belgium, where
+					Mailgun's EU region, hosted by Google, processes the emails it sends;
+				</li>
+				<li>
+					in the United States, where Cloudflare, Inc. is based and may process
+					the data in its cookies, and where Mailgun Technologies, Inc. provides
+					support and managed services for Mailgun;
+				</li>
+				<li>
+					in Cloudflare's network, which stores data mainly in the United States
+					and the European Economic Area and may access it from around the
+					world;
+				</li>
+				<li>
+					in the countries that Microsoft chooses for Solvaxon's mailboxes:
+					Microsoft 365 has no data centres in Jordan, and for an organization
+					that signs up in Jordan, Microsoft does not commit to a country and
+					may store and process the data in the United States or in any other
+					country where Microsoft or its subprocessors operate.
+				</li>
+			</ul>
+			<p>
+				Cloudflare, Mailgun and Microsoft commit in their data processing terms
+				to protecting the personal data they process for their customers, and
+				nexserv GmbH is based in Germany, where the European Union's General
+				Data Protection Regulation applies. Even so, these countries may not
+				protect personal data to the same level as Jordan's Personal Data
+				Protection Law. By ticking the consent box or sending an email, you
+				agree to these transfers.
+			</p>
+		</div>
+	</section>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">06</p>
+			<h2>How long it is kept</h2>
+		</header>
+		<div class="details">
+			<ul>
+				<li>
+					Your enquiry emails, the emails you send to {publicEmail} and the
+					replies to them: for as long as Solvaxon needs them to answer you and
+					to continue the conversation that follows, then for 2 years after the
+					last message as a record, and then they are deleted.
+				</li>
+				<li>
+					Mailgun keeps no copy of the emails once it has sent them. Its records
+					of each email, which include the subject line with your name, are kept
+					for up to 30 days.
+				</li>
+				<li>
+					On the server, your form is kept in memory only while it is being
+					processed. Your IP address is kept in memory until 60 minutes after
+					your latest attempt, and a SHA-256 hash of your email address and
+					message, a one-way code from which they cannot be read back, until 60
+					minutes after your enquiry was last delivered; both are erased sooner
+					if the server restarts.
+				</li>
+				<li>
+					Logs on the server that contain IP addresses are deleted after at most
+					14 days. The site's own logs contain no personal data.
+				</li>
+				<li>
+					Cloudflare decides how long it keeps the data it processes; its
+					privacy policy sets no fixed period.
+				</li>
+			</ul>
+			<p>
+				If you withdraw your consent or ask for your data to be erased, Solvaxon
+				deletes your emails earlier, unless a law requires keeping them.
+			</p>
+		</div>
+	</section>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">07</p>
+			<h2>Cookies and the Turnstile check</h2>
+		</header>
+		<div class="details">
+			<p>Solvaxon's pages set no cookies and store nothing on your device.</p>
+			<p>
+				On the contact page, when you tick the consent box, your browser loads
+				Cloudflare Turnstile from challenges.cloudflare.com to check that you
+				are not a bot. Turnstile uses signals from your browser, such as your IP
+				address, your browser's TLS fingerprint and User-Agent, and the site's
+				key and address. It does not read what you type into the form. When the
+				check passes, Turnstile gives your browser a token that can be used once
+				and is valid for 300 seconds, and the server sends the token to
+				Cloudflare to confirm the check.
+			</p>
+			<p>
+				Cloudflare's Challenge Platform, which powers Turnstile, may set these
+				cookies, which Cloudflare describes as strictly necessary:
+			</p>
+			<ul>
+				<li>
+					cf_clearance, which records that your browser passed a Cloudflare
+					check, so that it is not asked to pass it again; by default it lasts
+					30 minutes;
+				</li>
+				<li>
+					cf_chl_rc_i, cf_chl_rc_ni and cf_chl_rc_m, which help Cloudflare find
+					technical problems.
+				</li>
+			</ul>
+			<p>
+				Cloudflare may process the data in these cookies in the United States.
+				<a href={cookiesUrl}>Cloudflare's page about its cookies</a> has the
+				details.
+			</p>
+		</div>
+	</section>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">08</p>
+			<h2>Your rights</h2>
+		</header>
+		<div class="details">
+			<p>
+				Under Article 4 of Jordan's Personal Data Protection Law, you have the
+				right to:
+			</p>
+			<ul>
+				<li>
+					know, review and get the personal data Solvaxon holds about you;
+				</li>
+				<li>withdraw your consent;</li>
+				<li>have your data corrected, amended, added to or updated;</li>
+				<li>restrict the processing of your data to a specific scope;</li>
+				<li>have your data erased or concealed, in the cases the law sets;</li>
+				<li>
+					object to processing that is not necessary for its purpose, goes
+					beyond what the purpose requires, or is discriminatory, unfair or
+					unlawful;
+				</li>
+				<li>have a copy of your data transferred to another controller;</li>
+				<li>be told about any breach of the security of your data.</li>
+			</ul>
+			<p>
+				To use a right, email <a href={emailHref}>{publicEmail}</a>. You can
+				also use the <a href={formsUrl}>request forms</a> approved by Jordan's
+				Personal Data Protection Council. Before acting on a request, Solvaxon
+				checks that it comes from you. Using your rights has no financial or
+				contractual consequences for you.
+			</p>
+		</div>
+	</section>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">09</p>
+			<h2>Your consent</h2>
+		</header>
+		<div class="details">
+			<p>
+				The contact form has a consent box that is not ticked in advance and
+				must be ticked to send the form. Ticking it confirms that you agree to
+				Solvaxon processing the information you send as this policy describes,
+				including the transfers outside Jordan and the Turnstile check. The
+				email that Solvaxon receives records the time of your consent and the
+				version of this policy. When you send an email to {publicEmail}, you
+				consent to Solvaxon processing it as this policy describes.
+			</p>
+			<p>
+				If you do not agree, do not send the form or an email; the rest of the
+				site works without them.
+			</p>
+			<p>
+				You can withdraw your consent at any time by emailing
+				<a href={emailHref}>{publicEmail}</a>, or with the
+				<a href={withdrawalUrl}>Council's form for withdrawing consent</a>.
+				Solvaxon then stops processing your data and deletes your emails, unless
+				a law requires keeping them. Withdrawing does not affect processing that
+				took place before.
+			</p>
+			<p>
+				If you do not have full legal capacity, for example because you are a
+				minor, a parent or legal guardian must give consent for you.
+			</p>
+		</div>
+	</section>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">10</p>
+			<h2>How your data is protected</h2>
+		</header>
+		<div class="details">
+			<ul>
+				<li>
+					Connections are encrypted with HTTPS, both between your browser and
+					Cloudflare and between Cloudflare and the server.
+				</li>
+				<li>
+					The server sends your enquiry to Mailgun over an encrypted connection
+					and stores no copy of it, and the secret keys for Mailgun and
+					Turnstile are never sent to your browser.
+				</li>
+				<li>
+					Only Rayyan Tubaishat can sign in to the server and to the mailboxes.
+				</li>
+			</ul>
+			<p>
+				If a breach of the security of your data is likely to cause you severe
+				harm, Solvaxon tells you by email within 24 hours of discovering it, and
+				reports it to the Personal Data Protection Directorate within 72 hours,
+				as Article 20 of the law requires.
+			</p>
+		</div>
+	</section>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">11</p>
+			<h2>Complaints</h2>
+		</header>
+		<div class="details">
+			<p>
+				If you are concerned about how Solvaxon handles your data, email
+				<a href={emailHref}>{publicEmail}</a> first. If Solvaxon does not
+				resolve it, you can complain to the Personal Data Protection Directorate
+				at Jordan's Ministry of Digital Economy and Entrepreneurship, which
+				receives complaints under the law:
+			</p>
+			<ul>
+				<li>
+					through the <a href={portalUrl}>Bekhidmetkom portal</a>, by choosing
+					the Ministry of Digital Economy and Entrepreneurship and its Personal
+					Data Protection Directorate;
+				</li>
+				<li>
+					by email to <a href="mailto:PDP@modee.gov.jo">PDP@modee.gov.jo</a>;
+				</li>
+				<li>by telephone on +962 6 580 5700.</li>
+			</ul>
+			<p>
+				Complaining has no adverse consequences for you. The law gives the
+				Directorate, the Personal Data Protection Council and the courts powers
+				against a controller that breaks it, including warnings, fines and
+				orders to destroy data. If you live outside Jordan, you can also contact
+				the data protection authority of your country, where there is one.
+			</p>
+		</div>
+	</section>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">12</p>
+			<h2>Changes to this policy</h2>
+		</header>
+		<div class="details">
+			<p>
+				Solvaxon updates this policy when its processing or the law changes.
+				Each new version is published on this page with the date of its last
+				update, which is also its version, and applies to enquiries sent from
+				that date. Each enquiry email records the version that applied when it
+				was sent. If a change would use your data in a new way, Solvaxon asks
+				for your consent first.
+			</p>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.updated {
+		margin: 1rem 0 0;
+		color: var(--color-muted);
+	}
+</style>
