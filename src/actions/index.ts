@@ -1,9 +1,17 @@
-// Astro actions: the contact action, which Astro serves at /_actions/contact/ and which accepts form data. For each submission it receives, the handler records the time of receipt as the consent time, reads exactly the five contact fields (each sent once, as text), validates their values with the contact form rules, verifies the Turnstile token for the hostname of the configured site URL, and sends the enquiry through Mailgun; when Mailgun accepts the email, the handler returns nothing, which Astro answers with status 204. The handler logs how each submission ends as one line that starts with "contact" and contains no personal data, and it reports every failure as an ActionError with a fixed message: BAD_REQUEST for invalid input, FORBIDDEN when the token fails verification, SERVICE_UNAVAILABLE when Turnstile or Mailgun is unavailable, and INTERNAL_SERVER_ERROR for a Turnstile configuration error, a send that Mailgun rejects, or any unexpected error.
+// Astro actions: the contact action, which Astro serves at /_actions/contact/ and which accepts form data. For each submission it receives, the handler records the time of receipt as the consent time and then takes these steps in order, each of which can end the submission: it counts the submission as an attempt for the client address and applies the attempt limit; reads exactly the five contact fields (each sent once, as text) and validates their values with the contact form rules; reserves a send within the send capacity; verifies the Turnstile token for the hostname of the configured site URL; ends the submission without a send if an enquiry with the same email address and message was delivered in the past 60 minutes; and sends the enquiry through Mailgun. A reserved send that is not attempted is released. When Mailgun accepts the email, or the enquiry is a duplicate, the handler returns nothing, which Astro answers with status 204. The handler logs how each submission ends as one line that starts with "contact" and contains no personal data; a rejection by the attempt limit or the send capacity is logged only when the limit reports it as its first. The handler reports every failure as an ActionError with a fixed message: TOO_MANY_REQUESTS when the client address has made too many attempts, BAD_REQUEST for invalid input, FORBIDDEN when the token fails verification, SERVICE_UNAVAILABLE when the send capacity is reached or Turnstile or Mailgun is unavailable, and INTERNAL_SERVER_ERROR for a Turnstile configuration error, a send that Mailgun rejects, or any unexpected error.
 import {
 	ActionError,
 	defineAction,
 	type ActionAPIContext,
 } from "astro:actions";
+import {
+	countAttempt,
+	isDuplicate,
+	recordDelivery,
+	recordSendAttempt,
+	releaseSend,
+	reserveSend,
+} from "../lib/contact/limits";
 import { sendEnquiry } from "../lib/contact/mailgun";
 import {
 	fieldNames,
@@ -19,6 +27,7 @@ type InvalidInput =
 const failureMessages = {
 	BAD_REQUEST: "Some information is missing or invalid.",
 	FORBIDDEN: "The verification check failed.",
+	TOO_MANY_REQUESTS: "Too many attempts from your connection.",
 	SERVICE_UNAVAILABLE: "Your message may not have been sent.",
 	INTERNAL_SERVER_ERROR: "Your message could not be sent.",
 };
@@ -62,12 +71,24 @@ function readFields(formData: FormData): ContactValues | InvalidInput {
 	return { name, email, message, consent, "cf-turnstile-response": token };
 }
 
-// Runs the steps for one submission (reading the fields, validating the values, verifying the Turnstile token, and sending the email) and logs the successful send or each failure that a step reports, throwing the matching ActionError for that failure; any other error reaches the caller unchanged.
-async function processSubmission(
+// Counts the submission as an attempt for the client address, and throws TOO_MANY_REQUESTS if the attempt limit rejects it, logging the rejection if the limit reports it as its first for the address.
+function enforceAttemptLimit(context: ActionAPIContext): void {
+	switch (countAttempt(context.clientAddress)) {
+		case "limited":
+			context.logger.warn("contact rate_limited");
+			throw failure("TOO_MANY_REQUESTS");
+		case "still_limited":
+			throw failure("TOO_MANY_REQUESTS");
+		case "allowed":
+			return;
+	}
+}
+
+// Reads the five contact fields and validates their values, returning the normalized values, or logs the kind of invalid input and throws BAD_REQUEST.
+function readValues(
 	formData: FormData,
 	context: ActionAPIContext,
-): Promise<void> {
-	const consentTime = new Date().toISOString();
+): ContactValues {
 	const fields = readFields(formData);
 	if (typeof fields === "string") {
 		context.logger.warn(`contact invalid_input ${fields}`);
@@ -78,14 +99,31 @@ async function processSubmission(
 		context.logger.warn("contact invalid_input rule_failed");
 		throw failure("BAD_REQUEST");
 	}
-	const { values } = validation;
+	return validation.values;
+}
+
+// Reserves a send within the send capacity, or throws SERVICE_UNAVAILABLE if the capacity is reached, logging the rejection if the capacity reports it as its first.
+function reserveCapacity(context: ActionAPIContext): void {
+	switch (reserveSend()) {
+		case "full":
+			context.logger.warn("contact capacity_reached");
+			throw failure("SERVICE_UNAVAILABLE");
+		case "still_full":
+			throw failure("SERVICE_UNAVAILABLE");
+		case "reserved":
+			return;
+	}
+}
+
+// Verifies the Turnstile token for the hostname of the configured site URL, and logs the failure and throws the matching ActionError if the verification does not pass; throws an Error if no site URL is configured.
+async function verifySubmission(
+	token: string,
+	context: ActionAPIContext,
+): Promise<void> {
 	if (context.site === undefined) {
 		throw new Error("The site URL is not configured.");
 	}
-	const verification = await verifyToken(
-		values["cf-turnstile-response"],
-		context.site.hostname,
-	);
+	const verification = await verifyToken(token, context.site.hostname);
 	switch (verification.outcome) {
 		case "rejected":
 			context.logger.warn(`contact verification_failed ${verification.detail}`);
@@ -97,8 +135,16 @@ async function processSubmission(
 			context.logger.error("contact verification_unavailable");
 			throw failure("SERVICE_UNAVAILABLE");
 		case "passed":
-			break;
+			return;
 	}
+}
+
+// Sends the enquiry through Mailgun; when Mailgun accepts it, remembers the enquiry for the duplicate check and logs Mailgun's message id, and otherwise logs the failure and throws the matching ActionError.
+async function deliver(
+	values: ContactValues,
+	consentTime: string,
+	context: ActionAPIContext,
+): Promise<void> {
 	const delivery = await sendEnquiry({
 		name: values.name,
 		email: values.email,
@@ -113,7 +159,34 @@ async function processSubmission(
 			context.logger.error(`contact delivery_rejected ${delivery.status}`);
 			throw failure("INTERNAL_SERVER_ERROR");
 		case "sent":
+			recordDelivery(values.email, values.message);
 			context.logger.info(`contact sent ${JSON.stringify(delivery.id)}`);
+	}
+}
+
+// Records the time of receipt as the consent time, then runs the steps for one submission in order: the attempt limit, reading and validating the fields, the send reservation, the Turnstile verification, the duplicate check (an enquiry with the same email address and message as one delivered in the past 60 minutes ends the submission without a send, logged as a duplicate), and the delivery. A reserved send that is not attempted is released. The ActionErrors that the steps throw, and any other error, reach the caller unchanged.
+async function processSubmission(
+	formData: FormData,
+	context: ActionAPIContext,
+): Promise<void> {
+	const consentTime = new Date().toISOString();
+	enforceAttemptLimit(context);
+	const values = readValues(formData, context);
+	reserveCapacity(context);
+	let sendAttempted = false;
+	try {
+		await verifySubmission(values["cf-turnstile-response"], context);
+		if (isDuplicate(values.email, values.message)) {
+			context.logger.info("contact duplicate");
+			return;
+		}
+		recordSendAttempt();
+		sendAttempted = true;
+		await deliver(values, consentTime, context);
+	} finally {
+		if (!sendAttempted) {
+			releaseSend();
+		}
 	}
 }
 
