@@ -1,0 +1,35 @@
+---
+// Contact page: the page title and description; additions to this page's Content Security Policy, made here because Astro writes the policy's meta element before it renders the components in the page body: https://challenges.cloudflare.com as a script source and as the frame source (the values that Cloudflare documents for Turnstile's script and widget), and 'self' as a script source, because adding a script source replaces Astro's default 'self', which the page's own script needs; an introduction with the main heading (the page's name followed by the site name) and a lead paragraph that offers the public email address as an alternative to the form; and one numbered section, with its number and heading placed beside the contact form when the viewport is at least 48rem wide. The introduction and the numbered section use the shared styles in global.css.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactForm from "../components/ContactForm.astro";
+import { contactPage, publicEmail, siteName } from "../lib/site";
+
+const description = `Contact Solvaxon about a website, web application, custom online tool or other web-based project: send a message with the contact form or email ${publicEmail}.`;
+const emailHref = `mailto:${publicEmail}`;
+Astro.csp?.insertScriptResource("'self'");
+Astro.csp?.insertScriptResource("https://challenges.cloudflare.com");
+Astro.csp?.insertDirective("frame-src https://challenges.cloudflare.com");
+---
+
+<BaseLayout
+	title={`${contactPage.name} - ${siteName}`}
+	description={description}
+>
+	<div class="page-width page-intro">
+		<h1>{`${contactPage.name} ${siteName}`}</h1>
+		<p class="lead">
+			Tell Solvaxon about the idea you want to bring to life or the problem you
+			want to solve. Send a message with the form below, or email
+			<a href={emailHref}>{publicEmail}</a>.
+		</p>
+	</div>
+	<section class="page-width numbered-section">
+		<header>
+			<p class="number">01</p>
+			<h2>Send a message</h2>
+		</header>
+		<div class="details">
+			<ContactForm />
+		</div>
+	</section>
+</BaseLayout>

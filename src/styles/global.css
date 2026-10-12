@@ -1,4 +1,4 @@
-/* Site-wide styles: the brand colour tokens, the light-only colour scheme, the page colours and base typography, links in the colour of the text around them, second-level headings, a page column at least as tall as the window (the footer fills any space left on short pages), the shared content width, number labels (in the numbered sections and in the home page's list of what Solvaxon builds), an introduction with the main heading and a lead paragraph (on the Services, About, Privacy Policy, and not-found pages), and numbered sections (on the Services, About, and Privacy Policy pages), each below a hairline rule, with the number and heading placed beside the section text when the viewport is at least 48rem wide; in the section text, a space between consecutive paragraphs and between a paragraph and a list next to it, and bulleted lists with a small space between their items. */
+/* Site-wide styles: the colour tokens (the brand colours, the white of form fields, and the red of error text and the borders of invalid fields), the light-only colour scheme, the page colours and base typography, links in the colour of the text around them, second-level headings, a page column at least as tall as the window (the footer fills any space left on short pages), the shared content width, number labels (in the numbered sections and in the home page's list of what Solvaxon builds), the button style shared by the home page's link to the Contact page and the contact form's send button (deep green with ivory text, no underline, and the page's font), an introduction with the main heading and a lead paragraph (on the Services, About, Contact, Privacy Policy, and not-found pages), and numbered sections (on the Services, About, Contact, and Privacy Policy pages), each below a hairline rule, with the number and heading placed beside the rest of the section when the viewport is at least 48rem wide; in the section text, a space between consecutive paragraphs and between a paragraph and a list next to it, and bulleted lists with a small space between their items. */
 :root {
 	--color-deep-green: #172019;
 	--color-ivory: #f4f5ef;
@@ -7,6 +7,8 @@
 	--color-muted: #556055;
 	--color-rule-light: #d0d5ca;
 	--color-rule-dark: #354236;
+	--color-white: #ffffff;
+	--color-error: #9b2c1f;
 	color-scheme: only light;
 }
 
@@ -42,6 +44,17 @@ h2 {
 	color: var(--color-muted);
 	font-size: 0.8125rem;
 	letter-spacing: 0.16em;
+}
+
+.button {
+	display: inline-block;
+	padding: 0.75rem 1.5rem;
+	border: 0;
+	background-color: var(--color-deep-green);
+	color: var(--color-ivory);
+	font: inherit;
+	text-decoration: none;
+	cursor: pointer;
 }
 
 .page-intro {

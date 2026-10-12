@@ -1,7 +1,13 @@
 ---
-// Home page: the page title and description; the deep-green hero with its label, main heading, hairline rule, lead paragraph (the description text), and the ivory Solvaxon symbol as a decorative background; the section on what Solvaxon builds, with its heading and a numbered list with one row per service, each below a hairline rule: the service's number and its name, which links to the service's section on the Services page (the name and the link target come from site.ts), with a short summary below them, or beside them when the viewport is at least 48rem wide; below a hairline rule, the section on how Solvaxon works, with its heading and the four steps on the route line, a deep-green line with a square stop centred on it at each step, running down the side of the steps, or along the top of four columns when the viewport is at least 48rem wide; and, at the end of the page content, the structured data for search engines: a JSON-LD script element with WebSite data (the site name and the home page URL) and OnlineBusiness data (the same name and URL, the URL of the square Solvaxon logo, the description text, and the public email address, which the footer shows on the page). OnlineBusiness is the subtype of Organization that Google recommends for a business that, like Solvaxon, works only online.
+// Home page: the page title and description; the deep-green hero with its label, main heading, hairline rule, lead paragraph (the description text), and the ivory Solvaxon symbol as a decorative background; the section on what Solvaxon builds, with its heading and a numbered list with one row per service, each below a hairline rule: the service's number and its name, which links to the service's section on the Services page (the name and the link target come from site.ts), with a short summary below them, or beside them when the viewport is at least 48rem wide; below a hairline rule, the section on how Solvaxon works, with its heading and the four steps on the route line, a deep-green line with a square stop centred on it at each step, running down the side of the steps, or along the top of four columns when the viewport is at least 48rem wide; the deep-green call-to-action band, with its heading, a short paragraph, and a link to the Contact page styled as a lime button with deep-green text (the link's text is the Contact page's name followed by the site name, and its target is the Contact page's path, both from site.ts); and, at the end of the page content, the structured data for search engines: a JSON-LD script element with WebSite data (the site name and the home page URL) and OnlineBusiness data (the same name and URL, the URL of the square Solvaxon logo, the description text, and the public email address, which the footer shows on the page). OnlineBusiness is the subtype of Organization that Google recommends for a business that, like Solvaxon, works only online.
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { publicEmail, services, servicesPage, siteName } from "../lib/site";
+import {
+	contactPage,
+	publicEmail,
+	services,
+	servicesPage,
+	siteName,
+} from "../lib/site";
 
 const description =
 	"Solvaxon builds websites, web applications, custom online tools and other web-based projects that help individuals and businesses bring ideas to life and solve practical problems.";
@@ -109,6 +115,19 @@ const structuredData = [
 			<li>Build the product</li>
 			<li>Deliver the finished product</li>
 		</ol>
+	</section>
+	<section class="cta">
+		<div class="page-width">
+			<h2>Work with Solvaxon</h2>
+			<p>
+				Tell Solvaxon about the idea you want to bring to life or the problem
+				you want to solve.
+			</p>
+			<a
+				class="button"
+				href={contactPage.path}
+			>{`${contactPage.name} ${siteName}`}</a>
+		</div>
 	</section>
 	<script
 		type="application/ld+json"
@@ -240,6 +259,23 @@ const structuredData = [
 		width: var(--stop-size);
 		height: var(--stop-size);
 		background-color: var(--color-deep-green);
+	}
+
+	.cta {
+		padding-block: clamp(3rem, 2rem + 5vw, 6rem);
+		background-color: var(--color-deep-green);
+		color: var(--color-ivory);
+	}
+
+	.cta p {
+		max-width: 60ch;
+		margin: 1.25rem 0 0;
+	}
+
+	.cta .button {
+		margin-block-start: 2rem;
+		background-color: var(--color-lime);
+		color: var(--color-deep-green);
 	}
 
 	@media (min-width: 48rem) {

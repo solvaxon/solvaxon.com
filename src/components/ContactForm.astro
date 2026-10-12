@@ -1,0 +1,149 @@
+---
+// Contact form, which only its script (src/scripts/contact-form.ts) sends: the browser's own validation is off, because the script checks the values with the contact form rules, and the send button is disabled in the page as built until the script enables it. The form holds labelled fields for the name, the email address (both with autofill hints), and the message, each with an area below it for its error message; the consent box, unticked, whose label links to the Privacy Policy, which opens in a new tab; the verification part, hidden until the consent box is first ticked, with the space for the Turnstile widget, which holds a loading note until the widget replaces it and carries the public Turnstile site key (written into the page when the site is built) in a data attribute, and an area below that space for the verification check's error message; the send button, with an area beside it for the result message; and, for browsers without JavaScript, which the form needs, a notice that gives the public email address instead. This file styles the form: white fields with muted borders, and red borders on the fields that the script marks as invalid; the consent box beside the first line of its label; error messages in red, and error and result areas hidden while they are empty; the height reserved for the compact widget, with a line height of zero in that space, so that the widget's inline frame adds no line space below itself (the loading note keeps the page's line height); the send button faded while it is disabled; and a failed result in red.
+import { TURNSTILE_SITE_KEY } from "astro:env/server";
+import { privacyPage, publicEmail } from "../lib/site";
+
+const emailHref = `mailto:${publicEmail}`;
+---
+
+<form id="contact-form" class="contact-form" novalidate>
+	<div class="field">
+		<label for="contact-name">Name</label>
+		<input id="contact-name" name="name" type="text" autocomplete="name" />
+		<p id="contact-name-error" class="error"></p>
+	</div>
+	<div class="field">
+		<label for="contact-email">Email address</label>
+		<input id="contact-email" name="email" type="email" autocomplete="email" />
+		<p id="contact-email-error" class="error"></p>
+	</div>
+	<div class="field">
+		<label for="contact-message">Message</label>
+		<textarea id="contact-message" name="message" rows="8"></textarea>
+		<p id="contact-message-error" class="error"></p>
+	</div>
+	<div class="consent">
+		<input id="contact-consent" name="consent" type="checkbox" value="yes" />
+		<label for="contact-consent">
+			I agree to Solvaxon processing the information I send to answer my
+			enquiry, as the
+			<a href={privacyPage.path} target="_blank" set:text={privacyPage.name} />
+			describes: for the period it states, including transfer to service
+			providers outside Jordan and a Cloudflare Turnstile security check. I can
+			withdraw my consent at any time.
+		</label>
+		<p id="contact-consent-error" class="error"></p>
+	</div>
+	<div id="contact-verification" class="verification" hidden>
+		<div id="contact-widget" class="widget" data-sitekey={TURNSTILE_SITE_KEY}>
+			<p class="loading">Loading the verification check...</p>
+		</div>
+		<p id="contact-verification-error" class="error"></p>
+	</div>
+	<div class="send">
+		<button id="contact-send" class="button" type="submit" disabled>
+			Send message
+		</button>
+		<p id="contact-result" class="result"></p>
+	</div>
+	<noscript>
+		<p>
+			The form needs JavaScript. To send a message without it, email
+			<a href={emailHref}>{publicEmail}</a>.
+		</p>
+	</noscript>
+</form>
+
+<script src="../scripts/contact-form.ts"></script>
+
+<style>
+	.contact-form {
+		display: grid;
+		gap: 1.5rem;
+	}
+
+	.contact-form p {
+		margin: 0;
+	}
+
+	.field {
+		display: grid;
+		gap: 0.375rem;
+	}
+
+	.field input,
+	.field textarea {
+		box-sizing: border-box;
+		width: 100%;
+		padding: 0.5rem 0.75rem;
+		border: 1px solid var(--color-muted);
+		border-radius: 0;
+		background-color: var(--color-white);
+		color: inherit;
+		font: inherit;
+	}
+
+	.field textarea {
+		resize: vertical;
+	}
+
+	.field .invalid {
+		border-color: var(--color-error);
+	}
+
+	.consent {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		gap: 0.375rem 0.75rem;
+		align-items: start;
+	}
+
+	.consent input {
+		width: 1.125rem;
+		height: 1.125rem;
+		margin: 0.1875rem 0 0;
+	}
+
+	.consent .error {
+		grid-column: 2;
+	}
+
+	.error {
+		color: var(--color-error);
+	}
+
+	.error:empty,
+	.result:empty {
+		display: none;
+	}
+
+	.widget {
+		min-height: 140px;
+		line-height: 0;
+	}
+
+	.loading {
+		color: var(--color-muted);
+		line-height: 1.5;
+	}
+
+	.verification .error {
+		margin-block-start: 0.375rem;
+	}
+
+	.send {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem 1.5rem;
+	}
+
+	.button:disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
+
+	.failure {
+		color: var(--color-error);
+	}
+</style>
