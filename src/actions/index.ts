@@ -1,4 +1,4 @@
-// Astro actions: the contact action, which Astro serves at /_actions/contact/ and which accepts form data. For each submission it receives, the handler records the time of receipt as the consent time and then takes these steps in order, each of which can end the submission: it counts the submission as an attempt for the client address and applies the attempt limit; reads exactly the five contact fields (each sent once, as text) and validates their values with the contact form rules; reserves a send within the send capacity; verifies the Turnstile token for the hostname of the configured site URL; ends the submission without a send if an enquiry with the same email address and message was delivered in the past 60 minutes; and sends the enquiry through Mailgun. A reserved send that is not attempted is released. When Mailgun accepts the email, or the enquiry is a duplicate, the handler returns nothing, which Astro answers with status 204. The handler logs how each submission ends as one line that starts with "contact" and contains no personal data; a rejection by the attempt limit or the send capacity is logged only when the limit reports it as its first. The handler reports every failure as an ActionError with a fixed message: TOO_MANY_REQUESTS when the client address has made too many attempts, BAD_REQUEST for invalid input, FORBIDDEN when the token fails verification, SERVICE_UNAVAILABLE when the send capacity is reached or Turnstile or Mailgun is unavailable, and INTERNAL_SERVER_ERROR for a Turnstile configuration error, a send that Mailgun rejects, or any unexpected error.
+// Astro actions: the contact action, which Astro serves at /_actions/contact/ and which accepts form data. Each time the handler runs, it first passes its request's logger to the graceful shutdown (shutdown.ts), which keeps the first logger it receives and from then on watches for SIGINT. Then it applies the shutdown check, which rejects the submission while the process is shutting down; otherwise the submission is in flight until the handler ends. For a submission that passes the shutdown check, the handler records the time of receipt as the consent time and then takes these steps in order, each of which can end the submission: it counts the submission as an attempt for the client address and applies the attempt limit; reads exactly the five contact fields (each sent once, as text) and validates their values with the contact form rules; reserves a send within the send capacity; verifies the Turnstile token for the hostname of the configured site URL; ends the submission without a send if an enquiry with the same email address and message was delivered in the past 60 minutes; and sends the enquiry through Mailgun. A reserved send that is not attempted is released. When Mailgun accepts the email, or the enquiry is a duplicate, the handler returns nothing, which Astro answers with status 204. The handler logs how each submission ends as one line that starts with "contact" and contains no personal data; a submission that the shutdown check rejects is not logged, and a rejection by the attempt limit or the send capacity is logged only when the limit reports it as its first. The handler reports every failure as an ActionError with a fixed message: TOO_MANY_REQUESTS when the client address has made too many attempts, BAD_REQUEST for invalid input, FORBIDDEN when the token fails verification, SERVICE_UNAVAILABLE when the process is shutting down, the send capacity is reached, or Turnstile or Mailgun is unavailable, and INTERNAL_SERVER_ERROR for a Turnstile configuration error, a send that Mailgun rejects, or any unexpected error.
 import {
 	ActionError,
 	defineAction,
@@ -19,6 +19,11 @@ import {
 	type ContactValues,
 	type FieldName,
 } from "../lib/contact/rules";
+import {
+	beginSubmission,
+	endSubmission,
+	watchShutdown,
+} from "../lib/contact/shutdown";
 import { verifyToken } from "../lib/contact/turnstile";
 
 type InvalidInput =
@@ -164,7 +169,7 @@ async function deliver(
 	}
 }
 
-// Records the time of receipt as the consent time, then runs the steps for one submission in order: the attempt limit, reading and validating the fields, the send reservation, the Turnstile verification, the duplicate check (an enquiry with the same email address and message as one delivered in the past 60 minutes ends the submission without a send, logged as a duplicate), and the delivery. A reserved send that is not attempted is released. The ActionErrors that the steps throw, and any other error, reach the caller unchanged.
+// Records the time of receipt as the consent time, then runs the steps that follow the shutdown check for one submission, in order: the attempt limit, reading and validating the fields, the send reservation, the Turnstile verification, the duplicate check (an enquiry with the same email address and message as one delivered in the past 60 minutes ends the submission without a send, logged as a duplicate), and the delivery. A reserved send that is not attempted is released. The ActionErrors that the steps throw, and any other error, reach the caller unchanged.
 async function processSubmission(
 	formData: FormData,
 	context: ActionAPIContext,
@@ -190,11 +195,15 @@ async function processSubmission(
 	}
 }
 
-// Handles a contact action request: runs the submission, passes its ActionErrors on, and turns any other error into INTERNAL_SERVER_ERROR after logging the error's name, or the type of a thrown value that is not an Error.
+// Handles a contact action request: passes the request's logger to the graceful shutdown, then applies the shutdown check, throwing SERVICE_UNAVAILABLE while the process is shutting down. Otherwise it runs the submission, passes its ActionErrors on, and turns any other error into INTERNAL_SERVER_ERROR after logging the error's name, or the type of a thrown value that is not an Error; as its last step, it ends the submission's time in flight.
 async function handleContact(
 	formData: FormData,
 	context: ActionAPIContext,
 ): Promise<void> {
+	watchShutdown(context.logger);
+	if (!beginSubmission()) {
+		throw failure("SERVICE_UNAVAILABLE");
+	}
 	try {
 		await processSubmission(formData, context);
 	} catch (error) {
@@ -205,6 +214,8 @@ async function handleContact(
 			`contact unexpected_error ${error instanceof Error ? error.name : typeof error}`,
 		);
 		throw failure("INTERNAL_SERVER_ERROR");
+	} finally {
+		endSubmission();
 	}
 }
 
