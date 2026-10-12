@@ -1,5 +1,5 @@
-// Astro configuration: the production site URL; page URLs that end with a slash (each page built as an index.html file in its own directory, except the 404 page, which is built as 404.html); lossless HTML whitespace removal; the Content Security Policy that Astro adds to every page in a meta element (resources, the base URL, and form submission targets all limited to the site's own origin, no object or embed content, and hashes of Astro's built-in scripts and of the scripts and styles that Astro processes); no Markdown syntax highlighting, because Astro's default highlighter, Shiki, uses inline styles that the policy blocks; the Node.js adapter in standalone mode, which builds a server that serves the built files and renders the routes that are not prerendered; no sessions, so the adapter sets up no session storage, and the session runtime stays out of the server bundle; and the sitemap integration, which writes a sitemap index and a sitemap of the site's pages (every page except the 404 page) when the site is built, and whose namespaces option excludes the unused news, xhtml, image, and video XML namespaces from the sitemap.
-import { defineConfig } from "astro/config";
+// Astro configuration: the production site URL; page URLs that end with a slash (each page built as an index.html file in its own directory, except the 404 page, which is built as 404.html); lossless HTML whitespace removal; the Content Security Policy that Astro adds to every page in a meta element (resources, the base URL, and form submission targets all limited to the site's own origin, no object or embed content, and hashes of Astro's built-in scripts and of the scripts and styles that Astro processes); a limit of 65536 bytes on the body of each action request; no Markdown syntax highlighting, because Astro's default highlighter, Shiki, uses inline styles that the policy blocks; the Node.js adapter in standalone mode, which builds a server that serves the built files and renders the routes that are not prerendered; no sessions, so the adapter sets up no session storage, and the session runtime stays out of the server bundle; the sitemap integration, which writes a sitemap index and a sitemap of the site's pages (every page except the 404 page) when the site is built, and whose namespaces option excludes the unused news, xhtml, image, and video XML namespaces from the sitemap; Astro's no-op image service, so the image endpoint that Astro adds to the server returns the built site's files unchanged and never resizes or converts an image; and the environment variables for the contact form, all required: three public values, which Astro writes into the build output where they are used (the Turnstile site key, the Mailgun sending domain, and the Mailgun region, us or eu), and three secrets, which the server reads at runtime (the Turnstile secret key, the Mailgun sending key, and the private address that receives contact form submissions); Astro checks all six when the site is built.
+import { defineConfig, envField, passthroughImageService } from "astro/config";
 import node from "@astrojs/node";
 import sitemap from "@astrojs/sitemap";
 
@@ -19,6 +19,7 @@ export default defineConfig({
 				"object-src 'none'",
 			],
 		},
+		actionBodySizeLimit: 65536,
 	},
 	markdown: {
 		syntaxHighlight: false,
@@ -37,4 +38,42 @@ export default defineConfig({
 			},
 		}),
 	],
+	image: {
+		service: passthroughImageService(),
+	},
+	env: {
+		schema: {
+			TURNSTILE_SITE_KEY: envField.string({
+				context: "server",
+				access: "public",
+				min: 1,
+			}),
+			TURNSTILE_SECRET_KEY: envField.string({
+				context: "server",
+				access: "secret",
+				min: 1,
+			}),
+			MAILGUN_SENDING_KEY: envField.string({
+				context: "server",
+				access: "secret",
+				min: 1,
+			}),
+			MAILGUN_DOMAIN: envField.string({
+				context: "server",
+				access: "public",
+				min: 1,
+			}),
+			MAILGUN_REGION: envField.enum({
+				context: "server",
+				access: "public",
+				values: ["us", "eu"],
+			}),
+			CONTACT_TO_ADDRESS: envField.string({
+				context: "server",
+				access: "secret",
+				min: 1,
+			}),
+		},
+		validateSecrets: true,
+	},
 });
