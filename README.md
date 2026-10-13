@@ -59,7 +59,8 @@ The project does not configure the server, Cloudflare, the proxy, or DNS; the ow
 - `www.solvaxon.com` only redirects: its proxied A record points to `192.0.2.1`, which is never reached, and a Single Redirect sends `http*://www.solvaxon.com/*` to `https://solvaxon.com/${2}` with status 301 and the query string preserved.
 - The edge certificate covers `solvaxon.com` and `www.solvaxon.com`, as Universal SSL does for the root domain and its first-level subdomains.
 - Compression stays on: by default, Cloudflare compresses HTML, CSS, JavaScript, SVG, XML, and JSON responses for visitors whose browsers support compression.
-- These stay off, because each one changes the pages or what reaches the server: Web Analytics (its automatic setup injects a script), Zaraz, Rocket Loader, Email Address Obfuscation, Bot Fight Mode, and the "Remove visitor IP headers" Managed Transform, which removes `CF-Connecting-IP`.
+- These stay off, because each one can change the pages, their headers, `robots.txt`, or what reaches the server: Web Analytics (its automatic setup injects a script), Zaraz, Rocket Loader, Email Address Obfuscation, Bot Fight Mode, Speed Brain (which Cloudflare turns on by default on the Free plan; it adds a `Speculation-Rules` header to the pages), Bot Preference Sync (it can prepend Cloudflare's own directives to `robots.txt`), and the "Remove visitor IP headers" Managed Transform, which removes `CF-Connecting-IP`.
+- HTTP Strict Transport Security (HSTS), on the Edge Certificates page, stays disabled: Max Age Header 0, and No-Sniff Header off. When it is enabled, Cloudflare serves its own `Strict-Transport-Security` header in its responses to all HTTPS requests; with No-Sniff on, Cloudflare also sends its own `X-Content-Type-Options` header. The reverse proxy sends both headers itself, as described below.
 
 ### Firewall
 
@@ -93,6 +94,7 @@ The project does not configure the server, Cloudflare, the proxy, or DNS; the ow
 ### Turnstile
 
 - The widget's mode is Managed, the mode Cloudflare recommends, and its only hostname is `solvaxon.com`. Cloudflare recommends that a production widget does not allow local hostnames such as `localhost`; local development uses Cloudflare's test keys instead (see [Local development](#local-development)).
+- Pre-clearance stays off, as it is by default (in the widget's settings, "Would you like to opt for pre-clearance for this site?" is No): Turnstile then issues only a one-time token to each visitor who passes the check, while with pre-clearance on, it also issues a `cf_clearance` cookie.
 - `TURNSTILE_SITE_KEY` is the widget's site key and `TURNSTILE_SECRET_KEY` its secret key.
 
 ## Environment variables
@@ -235,7 +237,7 @@ To stop or restart the site, PM2 sends it SIGINT, and SIGKILL if it is still run
 - PM2 starts each line with the date and time, for example `2026-10-13T14:02:11:`. Astro then adds its own time and, for warnings and errors, `[WARN]` or `[ERROR]`.
 - The site's log lines contain no visitor's IP address, name, email address, message, token, or secret.
 - PM2 does not rotate the log files. Check their size from time to time with `ls -l "$HOME/.pm2/logs"`, and empty them with `pm2 flush solvaxon` when needed.
-- If `pm2 status` shows `errored`, read `pm2 logs solvaxon --err --lines 50 --nostream`. For example, without `.env`, Node.js stops before the site starts, and PM2 marks the app `errored` after 16 such restarts in a row.
+- If `pm2 status` shows `errored`, read `pm2 logs solvaxon --err --lines 50 --nostream`. For example, without `.env`, Node.js stops before the site starts, and PM2 marks the app `errored` once it has failed to start 16 times in a row.
 
 ### Log lines of the contact form
 
@@ -381,12 +383,12 @@ curl -sS -o /dev/null -w '%{http_code}\n' https://solvaxon.com/nope/
 curl -sS https://solvaxon.com/nope/ | grep -q '<title>Page not found - Solvaxon</title>' && echo 'not-found page'
 ```
 
-Every page has the proxy's security headers and sets no cookie. For each page, the commands print `strict-transport-security: max-age=31536000`, `x-content-type-options: nosniff`, and `content-security-policy: frame-ancestors 'none'`, and no `set-cookie` line:
+Every page has the proxy's security headers, sets no cookie, and has no `Speculation-Rules` header from Speed Brain. For each page, the commands print `strict-transport-security: max-age=31536000`, `x-content-type-options: nosniff`, and `content-security-policy: frame-ancestors 'none'`, and no `set-cookie` or `speculation-rules` line:
 
 ```sh
 for page in / /services/ /about/ /contact/ /privacy/; do
 	echo "$page"
-	curl -sS -D - -o /dev/null "https://solvaxon.com$page" | grep -i -E '^(strict-transport-security|x-content-type-options|content-security-policy|set-cookie):'
+	curl -sS -D - -o /dev/null "https://solvaxon.com$page" | grep -i -E '^(strict-transport-security|x-content-type-options|content-security-policy|set-cookie|speculation-rules):'
 done
 ```
 
@@ -404,7 +406,7 @@ asset=$(ls dist/client/_astro | head -n 1)
 curl -sS -D - -o /dev/null "https://solvaxon.com/_astro/$asset" | grep -i '^cache-control:'
 ```
 
-On the server, in the project directory: each page reaches visitors exactly as built, so nothing on the way changed it or added a script. The commands print one `unchanged:` line for each page:
+On the server, in the project directory: each page, `robots.txt`, and each sitemap file reach visitors exactly as built, so nothing on the way changed them or added a script. The commands print one `unchanged:` line for each of them:
 
 ```sh
 cd "$HOME/solvaxon"
@@ -412,6 +414,9 @@ for page in "" services/ about/ contact/ privacy/; do
 	curl -sS --compressed "https://solvaxon.com/$page" | cmp - "dist/client/${page}index.html" && echo "unchanged: /$page"
 done
 curl -sS --compressed https://solvaxon.com/nope/ | cmp - dist/client/404.html && echo "unchanged: not-found page"
+for file in robots.txt sitemap-index.xml sitemap-0.xml; do
+	curl -sS --compressed "https://solvaxon.com/$file" | cmp - "dist/client/$file" && echo "unchanged: /$file"
+done
 ```
 
 On a machine outside the server's network on which the checks above succeed, so that its network allows ports 80 and 443: the server refuses connections that bypass Cloudflare. Run this for each public IP address of the server, an IPv6 address in square brackets; each line must end with exit code 7 (failed to connect) or 28 (timed out):
